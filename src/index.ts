@@ -1,9 +1,15 @@
-import express, {Request, Response} from 'express';
+import express from 'express'
+import { URLController } from './controler/URLControler'
+import { MongoConnection } from './database/MongoConection'
 
-const api = express();
+const api = express()
+api.use(express.json())
 
-api.get('/test', (req: Request, res: Response) => {
-    res.json({ success: true })
-})
+const database = new MongoConnection()
+database.connect()
 
-api.listen(5000, () => console.log('express is not running'));
+const urlController = new URLController()
+api.post('/shorten', urlController.shorten)
+api.get('/:hash', urlController.redirect)
+
+api.listen(5000, () => console.log('Express is running'))
